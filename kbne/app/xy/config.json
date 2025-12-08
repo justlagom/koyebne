@@ -19,20 +19,18 @@
         "selectedAuth": "X25519, not Post-Quantum"
       },
       "streamSettings": {
-        "network": "xhttp",
-        "xhttpSettings": {
+        "network": "ws",
+        "wsSettings": {
           "host": "",
-          "mode": "auto",
-          "path": "/b4386f03"
-        }
-        "security": "none",
+          "path": "/b3a053a4"
+        },
+        "security": "none"
       },
       "sniffing": {
         "enabled": true,
         "destOverride": [
           "http",
-          "tls",
-          "quic"
+          "tls"
         ]
       }
     }
