@@ -8,11 +8,15 @@
 
 该项目利用 Koyeb 的持续运行能力，并通过部署在 Cloudflare Workers 的 `worker.js` 文件实现远程登录保活，确保服务的持久可用性。
 
+
+
 ## ✨ 主要特性
 
   * **多协议支持:** 集成了 **ENC**、**Vioion**、**WS** 和 **ARGO** 代理协议。
   * **平台稳定:** 部署在 Koyeb 平台，享受其高性能和全球边缘网络。
   * **远程保活:** 通过 Cloudflare Worker 定时访问，解决 Koyeb 可能出现的休眠或回收问题。
+
+
 
 ## ⚙️ 部署指南 (Koyeb)
 
@@ -38,23 +42,32 @@ vless://%E5%A1%AB%E5%85%A5UUID@填入优选ip/域名:443?encryption=mlkem768x255
 [](https://www.google.com/search?q=https://app.koyeb.com/deploy%3Fname%3Dkoyebne%26type%3Dgit%26repository%3Dgithub.com/justlagom/koyebne%26branch%3Dmain%26env%5BENC_CONFIG%5D%3D)
 
 1.  **Sources:** 填写docker镜像地址 `ghcr.io/xxx/xxx`（建议fork后创建自己的docker镜像）。
-2.  **Environment variables and files:** 填入您准备好的 **`ENC_CONFIG`** 值。（UUID，DOMAIN）
-3.  **Instance:** 选择CPU Eco免费DE&US。
-4.  **Ports:** 需要开启一个7860默认暴露端口（开启**Public HTTPS access**），一个xray配置中自定义端口（可不开启 **Public HTTPS access** ）
-5.  点击 **"Deploy"** 完成部署。
 
-部署完成后，记下 Koyeb 分配给您的服务 **URL**，例如 `https://koyebne-xxxxx.koyeb.app`，这个 URL 将用于后续的保活配置。
+2.  **Environment variables and files:** 填入您准备好的 **`ENC_CONFIG`** 值。（UUID首次，PROXY_PATH首次，CLOUDFLARED_TOKEN首次，DOMAIN/此变量需要初次部署后可见）
 
-## 💡 Worker 保活机制 (Cloudflare)
+3.  **Instance:** 选择CPU Eco免费配置DE&US。
 
-为了确保 Koyeb 部署的服务不会因长时间不活跃而被休眠或回收，我们提供了 `worker.js` 文件，可部署到 Cloudflare Workers 实现定时访问保活。
+4.  **Ports:** 需要开启一个7860默认暴露端口（开启**Public HTTPS access**）
 
-### 步骤 1: 部署 Cloudflare Worker
+5.  点击 **"Deploy"** 完成首次部署。
+
+6.  部署完成后，记下 Koyeb 分配给您的服务 **URL**，例如 `https://koyebne-xxxxx.koyeb.app`，这个 URL 将用于后续项目保活配置。
+## 选择setting>添加最后一个变量DOMAIN（必须添加负责项目会休眠）
+
+
+
+## 💡 Worker 账号保活机制 (Cloudflare)
+
+为了确保 Koyeb 部署的服务不会因长时间（14天未登录）不活跃而被暂停项目，提供了 `worker.js` 文件，可部署到 Cloudflare Workers 实现定时访问保活。
+
+### 步骤 1: 获取 koyeb账号登录token
+
+### 步骤 2: 部署 Cloudflare Worker
 
 1.  创建一个新的 Cloudflare Worker。
 2.  将本项目中的 `worker.js` 文件内容复制并粘贴到您的 Worker 代码中。
 
-### 步骤 2: 配置 Worker 环境变量
+### 步骤 3: 配置 Worker 环境变量
 
 在 Cloudflare Worker 的设置中，您需要配置以下环境变量：
 
@@ -63,13 +76,6 @@ vless://%E5%A1%AB%E5%85%A5UUID@填入优选ip/域名:443?encryption=mlkem768x255
 | **`TARGET_URL`** | 您在 Koyeb 部署的服务 URL。 | `https://koyebne-xxxxx.koyeb.app` |
 | **`AUTH_TOKEN`** | 用于 Worker 身份验证的密钥。**自行获取koyeb账户所提供的token** | `your-token` |
 
-### 步骤 3: 配置 Koyeb 保活 Token
-
-回到 Koyeb 服务的环境变量设置，增加一个新的环境变量，用于验证 Worker 的访问请求：
-
-| 变量名 | 描述 | 示例值 |
-| :--- | :--- | :--- |
-| **`WORKER_TOKEN`** | 必须与您在 Cloudflare Worker 中设置的 `AUTH_TOKEN` **完全一致**。 | `your-token` |
 
 ### 步骤 4: 配置 Worker 定时任务 (Cron Trigger)
 
@@ -84,21 +90,7 @@ vless://%E5%A1%AB%E5%85%A5UUID@填入优选ip/域名:443?encryption=mlkem768x255
 3.  Koyeb 服务接收到请求，验证 `X-Worker-Token` 是否与 `WORKER_TOKEN` 匹配。
 4.  验证通过，服务保持活跃。
 
-## 🛠️ 本地开发
 
-```bash
-# 克隆项目
-git clone https://github.com/justlagom/koyebne.git
-cd koyebne
-
-# 安装依赖 (假设您使用 Node.js)
-# npm install
-
-# 运行服务 (根据您的实际代码运行方式)
-# node index.js
-```
-
------
 
 ## 📄 License
 
