@@ -52,7 +52,7 @@ vless://%E5%A1%AB%E5%85%A5UUID@填入优选ip/域名:443?encryption=mlkem768x255
 5.  点击 **"Deploy"** 完成首次部署。
 
 6.  部署完成后，记下 Koyeb 分配给您的服务 **URL**，例如 `https://koyebne-xxxxx.koyeb.app`，这个 URL 将用于后续项目保活配置。
-## 选择setting>添加最后一个变量DOMAIN（必须添加负责项目会休眠）
+**选择setting>添加最后一个变量DOMAIN（必须，未设置则项目约1h后会自动休眠）**
 
 
 
